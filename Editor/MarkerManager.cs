@@ -86,7 +86,6 @@ namespace Editor.AudioEditor
             public readonly int Id;
             public readonly int Sample;
             public readonly Expressions Expression = Expressions.Neutral;
-            public readonly string Character;
             public Marker(int id, int sample)
             {
                 Id = id;
