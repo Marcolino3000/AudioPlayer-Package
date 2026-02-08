@@ -119,7 +119,7 @@ namespace Editor.AudioEditor
             AddWaveformImage();
             waveformImageContainer.Add(previewImage);
             AddPlayhead();
-            RenderClipMarkers();
+            AddClipMarkers();
             // rootVisualElement.Add(customPlayButton);
             
             markerManagerSerializedObject = new SerializedObject(markerManager);
@@ -141,7 +141,7 @@ namespace Editor.AudioEditor
             UpdateWaveformTexture();
             AddPlayhead();
             RenderPlayhead();
-            RenderClipMarkers();
+            AddClipMarkers();
         }
 
         private void FindMarkerManager()
@@ -336,11 +336,11 @@ namespace Editor.AudioEditor
             // AddMarker(sample, localX);
             int id = markerManager.AddMarker(currentClip, sample);
             Debug.Log("Marker added.");
-            RenderClipMarkers();
+            AddClipMarkers();
             
         }
 
-        private void RenderClipMarkers()
+        private void AddClipMarkers()
         {
             if (currentClip == null || markerManager == null) return;
 
