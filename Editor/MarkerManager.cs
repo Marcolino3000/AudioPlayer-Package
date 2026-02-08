@@ -13,7 +13,7 @@ namespace Editor.AudioEditor
         public Dictionary<AudioClip, List<Marker>> clipsToMarkers = new();
         public int nextId = 1;
 
-        public event Action<Expressions> OnMarkerReached;
+        public event Action<MarkerType> OnMarkerReached;
 
         public int AddMarker(AudioClip clip, int sample)
         {
@@ -49,6 +49,14 @@ namespace Editor.AudioEditor
                 return markers.Select(m => m.Sample).ToList();
             return new List<int>();
         }
+        
+        public List<Marker> GetMarkers(AudioClip clip)
+        {
+            if (clipsToMarkers.TryGetValue(clip, out var markers))
+                return markers;
+            
+            return new List<Marker>();
+        }
 
         public void CheckPlayhead(AudioClip clip, int playheadSample)
         {
@@ -81,25 +89,19 @@ namespace Editor.AudioEditor
             return false;
         }
         
+        [Serializable]
         public class Marker
         {
             public readonly int Id;
             public readonly int Sample;
-            public readonly Expressions Expression = Expressions.Neutral;
+            public MarkerType Expression = MarkerType.Paragraph;
             public Marker(int id, int sample)
             {
                 Id = id;
                 Sample = sample;
             }
         }
-        
-        public enum Expressions 
-        {
-            Neutral,
-            Eyeroll,
-            Happy,
-            Sad,
-            Angry,
-        }
     }
+    
+
 }

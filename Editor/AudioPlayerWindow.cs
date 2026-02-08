@@ -5,6 +5,14 @@ using UnityEngine.UIElements;
 
 namespace Editor.AudioEditor
 {
+    
+    public enum MarkerType
+    {
+        Paragraph,
+        Neutral,
+        Happy,
+        Annoyed
+    }
     public class AudioPlayerWindow : EditorWindow
     {
         [SerializeField] private VisualTreeAsset playhead;
@@ -33,6 +41,8 @@ namespace Editor.AudioEditor
 
         private VisualElement timeBarElement;
         private TemplateContainer customPlayButton;
+        
+        private SerializedObject markerManagerSerializedObject;
 
         private VisualElement CreateTimeBarElement()
         {
@@ -111,6 +121,8 @@ namespace Editor.AudioEditor
             AddPlayhead();
             RenderClipMarkers();
             // rootVisualElement.Add(customPlayButton);
+            
+            markerManagerSerializedObject = new SerializedObject(markerManager);
         }
 
 
@@ -313,10 +325,8 @@ namespace Editor.AudioEditor
 
         private void OnWaveformRightClicked(PointerDownEvent evt)
         {
-            if (evt.button != 1) // Only respond to right mouse button
+            if (evt.button != 1)
                 return;
-
-            Debug.Log("right-clicked waveform");
             
             float localX = evt.localPosition.x;
             localX = Mathf.Clamp(localX, 0, waveformWidth - 1);
@@ -334,38 +344,49 @@ namespace Editor.AudioEditor
         {
             if (currentClip == null || markerManager == null) return;
 
-            foreach (var pos in markerManager.GetMarkerPositions(currentClip))
+            foreach (var marker in markerManager.GetMarkers(currentClip))
             {
-                float normalized = (float)pos / currentClip.samples;
+                float normalized = (float)marker.Sample / currentClip.samples;
                 float localX = normalized * waveformWidth;
-                AddMarkerVisualElement(pos, localX);
+                AddMarkerVisualElement(marker, localX);
             }
         }
 
-        private void AddMarkerVisualElement(int sample, float localX)
+        private void AddMarkerVisualElement(MarkerManager.Marker marker, float localX)
         {
             var ve = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.cod.audioplayer/Editor/SmallTriangleMarker.uxml");
-            var marker = ve.CloneTree();
-            // var marker = new VisualElement();
-            marker.style.position = Position.Absolute;
-            marker.style.left = localX;
-            marker.style.top = waveformHeight - 42;
+            var markerTemplate = ve.CloneTree();
+            markerTemplate.style.position = Position.Absolute;
+            markerTemplate.style.left = localX;
+            markerTemplate.style.top = waveformHeight - 42;
             // marker.style.width = settings.markerWidth;
             // marker.style.height = waveformHeight * 0.1f;
             // marker.style.backgroundColor = settings.markerColor;
 
-            marker.RegisterCallback<PointerDownEvent>(evt =>
+            var enumField = markerTemplate.Q<EnumField>();
+            if (enumField != null)
+            {
+                enumField.Init(marker.Expression);
+                enumField.value = marker.Expression;
+                enumField.RegisterValueChangedCallback(evt =>
+                {
+                    marker.Expression = (MarkerType)evt.newValue;
+                    EditorUtility.SetDirty(markerManager);
+                });
+            }
+            
+            markerTemplate.RegisterCallback<PointerDownEvent>(evt =>
             {
                 if (evt.button == 1)
                 {
                     Debug.Log("right-clicked marker");
-                    waveformImageContainer.Remove(marker);
-                    markerManager.RemoveMarkerBySample(currentClip, sample);
+                    waveformImageContainer.Remove(markerTemplate);
+                    markerManager.RemoveMarkerBySample(currentClip, marker.Sample);
                     Debug.Log("Marker removed.");
                 }
             });
 
-            waveformImageContainer.Add(marker);
+            waveformImageContainer.Add(markerTemplate);
             // markerManager.AddMarker(currentClip, sample);
         }
 
@@ -548,4 +569,5 @@ namespace Editor.AudioEditor
         }
         
     }
+
 }
