@@ -329,7 +329,7 @@ namespace Editor.AudioEditor
                 return;
             
             float localX = evt.localPosition.x;
-            localX = Mathf.Clamp(localX, 0, waveformWidth - 1);
+            localX = Mathf.Clamp(localX, 0, waveformWidth - 1) - settings.markerXPositionOffset;
             float normalized = localX / waveformWidth;
             int sample = Mathf.RoundToInt(normalized * (currentClip.samples - 1));
             
@@ -344,6 +344,14 @@ namespace Editor.AudioEditor
         {
             if (currentClip == null || markerManager == null) return;
 
+            // Clear existing marker visuals first
+            var markersToRemove = waveformImageContainer.Query<TemplateContainer>().ToList();
+            foreach (var m in markersToRemove)
+            {
+                if (m != playheadElement) // Don't remove playhead
+                    waveformImageContainer.Remove(m);
+            }
+            
             foreach (var marker in markerManager.GetMarkers(currentClip))
             {
                 float normalized = (float)marker.Sample / currentClip.samples;
@@ -549,15 +557,17 @@ namespace Editor.AudioEditor
                 debugLabel.text = "(none)";
                 // if (previewImage != null)
                 // previewImage.image = null;
-                currentClip = null;
+                // currentClip = null;
                 return false;
             }
             
             debugLabel.text = Selection.activeObject.name;
-            currentClip = Selection.activeObject as AudioClip;
+            var selection = Selection.activeObject as AudioClip;
             
-            if (currentClip == null)
+            if (selection == null)
                 return false;
+            
+            currentClip = selection;
             return true;
         }
 

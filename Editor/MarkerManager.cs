@@ -9,11 +9,11 @@ namespace Editor.AudioEditor
     [CreateAssetMenu(menuName = "AudioEditor/MarkerManager")]
     public class MarkerManager : SerializedScriptableObject
     {
+        public event Action<MarkerType> OnMarkerReached;
+        
         public int lastPlayheadSample = -1;
         public Dictionary<AudioClip, List<Marker>> clipsToMarkers = new();
         public int nextId = 1;
-
-        public event Action<MarkerType> OnMarkerReached;
 
         public int AddMarker(AudioClip clip, int sample)
         {

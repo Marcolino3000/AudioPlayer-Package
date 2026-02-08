@@ -21,4 +21,5 @@ MonoBehaviour:
   playheadWidth: 77
   markerColor: {r: 1, g: 1, b: 1, a: 1}
   markerWidth: 59
+  markerXPositionOffset: 50
   waveformScale: 0

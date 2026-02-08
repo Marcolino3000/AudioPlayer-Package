@@ -17,6 +17,7 @@ MonoBehaviour:
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: 8300000, guid: 09bd6d505a64949e9ba01e619434982c, type: 3}
+    - {fileID: 8300000, guid: 759b73aa02f0443d7ac75d57a9331b5a, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -35,7 +36,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 1
+      Data: 2
     - Name: 
       Entry: 7
       Data: 
@@ -48,34 +49,71 @@ MonoBehaviour:
         com.audioplayer.Editor]], mscorlib
     - Name: 
       Entry: 12
-      Data: 2
+      Data: 1
     - Name: 
       Entry: 7
       Data: 3|Editor.AudioEditor.MarkerManager+Marker, com.audioplayer.Editor
     - Name: Id
       Entry: 3
-      Data: 515
+      Data: 590
     - Name: Sample
       Entry: 3
-      Data: 48444
+      Data: 15704
     - Name: Expression
       Entry: 3
-      Data: 1
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: 4|Editor.AudioEditor.MarkerManager+Marker, com.audioplayer.Editor
+      Data: 
+    - Name: $k
+      Entry: 10
+      Data: 1
+    - Name: $v
+      Entry: 7
+      Data: 4|System.Collections.Generic.List`1[[Editor.AudioEditor.MarkerManager+Marker,
+        com.audioplayer.Editor]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 7
+      Data: 5|Editor.AudioEditor.MarkerManager+Marker, com.audioplayer.Editor
     - Name: Id
       Entry: 3
-      Data: 516
+      Data: 594
     - Name: Sample
       Entry: 3
-      Data: 66518
+      Data: 117999
     - Name: Expression
       Entry: 3
-      Data: 3
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 6|Editor.AudioEditor.MarkerManager+Marker, com.audioplayer.Editor
+    - Name: Id
+      Entry: 3
+      Data: 596
+    - Name: Sample
+      Entry: 3
+      Data: 99405
+    - Name: Expression
+      Entry: 3
+      Data: 0
     - Name: 
       Entry: 8
       Data: 
@@ -95,4 +133,4 @@ MonoBehaviour:
       Entry: 8
       Data: 
   lastPlayheadSample: 129178
-  nextId: 517
+  nextId: 597
