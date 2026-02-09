@@ -42,8 +42,6 @@ namespace Editor.AudioEditor
         private VisualElement timeBarElement;
         private TemplateContainer customPlayButton;
         
-        private SerializedObject markerManagerSerializedObject;
-
         private VisualElement CreateTimeBarElement()
         {
             var timeBar = new VisualElement();
@@ -122,7 +120,20 @@ namespace Editor.AudioEditor
             AddClipMarkers();
             // rootVisualElement.Add(customPlayButton);
             
-            markerManagerSerializedObject = new SerializedObject(markerManager);
+            rootVisualElement.RegisterCallback<KeyDownEvent>(OnKeyDown);
+        }
+
+        private void OnKeyDown(KeyDownEvent evt)
+        {
+            if (evt.keyCode != KeyCode.Space) 
+                return;
+            
+            if (!isPlaying)
+                StartPlaying();
+            else
+                StopPlaying();
+                
+            evt.StopPropagation();
         }
 
 
