@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -101,7 +102,10 @@ namespace Editor.AudioEditor
             LoadStyleSheets();
             LoadAudioPlayerSettings();
             ApplyAudioPlayerSettings();
+            
+            AddCurrentMarkerManagerField();
             FindMarkerManager();
+
 
             debugLabel = new Label(Selection.activeObject != null ? Selection.activeObject.name : "(none)");
             rootVisualElement.Add(debugLabel);
@@ -118,11 +122,28 @@ namespace Editor.AudioEditor
             waveformImageContainer.Add(previewImage);
             AddPlayhead();
             AddClipMarkers();
-            // rootVisualElement.Add(customPlayButton);
             
             rootVisualElement.focusable = true;
             rootVisualElement.RegisterCallback<KeyDownEvent>(OnKeyDown);
             
+        }
+
+        private void AddCurrentMarkerManagerField()
+        {
+            var markerManagerField = new ObjectField("Marker Manager")
+            {
+                objectType = typeof(MarkerManager),
+            };
+            
+            markerManagerField.value = markerManager;
+            SerializedObject markerManagerSO = new SerializedObject(markerManager);
+            markerManagerField.Bind(markerManagerSO);
+            
+            // markerManagerField.RegisterValueChangedCallback(evt =>
+            // {
+            //     markerManager = evt.newValue as MarkerManager;
+            // });
+            rootVisualElement.Add(markerManagerField);
         }
 
         private void OnKeyDown(KeyDownEvent evt)
