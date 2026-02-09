@@ -104,8 +104,6 @@ namespace Editor.AudioEditor
             ApplyAudioPlayerSettings();
             
             AddCurrentMarkerManagerField();
-            FindMarkerManager();
-
 
             debugLabel = new Label(Selection.activeObject != null ? Selection.activeObject.name : "(none)");
             rootVisualElement.Add(debugLabel);
@@ -130,19 +128,21 @@ namespace Editor.AudioEditor
 
         private void AddCurrentMarkerManagerField()
         {
+            if (markerManager == null)
+                FindMarkerManager();
+
             var markerManagerField = new ObjectField("Marker Manager")
             {
                 objectType = typeof(MarkerManager),
+                value = markerManager
             };
-            
-            markerManagerField.value = markerManager;
-            SerializedObject markerManagerSO = new SerializedObject(markerManager);
-            markerManagerField.Bind(markerManagerSO);
-            
-            // markerManagerField.RegisterValueChangedCallback(evt =>
-            // {
-            //     markerManager = evt.newValue as MarkerManager;
-            // });
+
+            if (markerManager != null)
+            {
+                SerializedObject markerManagerSO = new SerializedObject(markerManager);
+                markerManagerField.Bind(markerManagerSO);
+            }
+
             rootVisualElement.Add(markerManagerField);
         }
 
