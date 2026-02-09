@@ -363,7 +363,7 @@ namespace Editor.AudioEditor
                 return;
             
             float localX = evt.localPosition.x;
-            localX = Mathf.Clamp(localX, 0, waveformWidth - 1) - settings.markerXPositionOffset;
+            localX = Mathf.Clamp(localX, 0, waveformWidth - 1);
             float normalized = localX / waveformWidth;
             int sample = Mathf.RoundToInt(normalized * (currentClip.samples - 1));
             
@@ -371,19 +371,19 @@ namespace Editor.AudioEditor
             int id = markerManager.AddMarker(currentClip, sample);
             Debug.Log("Marker added.");
             AddClipMarkers();
-            
         }
 
         private void AddClipMarkers()
         {
-            if (currentClip == null || markerManager == null) return;
+            if (currentClip == null || markerManager == null) 
+                return;
 
-            // Clear existing marker visuals first
+            // Clear existing marker visualElements
             var markersToRemove = waveformImageContainer.Query<TemplateContainer>().ToList();
-            foreach (var m in markersToRemove)
+            foreach (var marker in markersToRemove)
             {
-                if (m != playheadElement) // Don't remove playhead
-                    waveformImageContainer.Remove(m);
+                if (marker != playheadElement) // Don't remove playhead
+                    waveformImageContainer.Remove(marker);
             }
             
             foreach (var marker in markerManager.GetMarkers(currentClip))
@@ -399,7 +399,7 @@ namespace Editor.AudioEditor
             var ve = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.cod.audioplayer/Editor/SmallTriangleMarker.uxml");
             var markerTemplate = ve.CloneTree();
             markerTemplate.style.position = Position.Absolute;
-            markerTemplate.style.left = localX;
+            markerTemplate.style.left = localX - 50;
             markerTemplate.style.top = waveformHeight - 42;
             // marker.style.width = settings.markerWidth;
             // marker.style.height = waveformHeight * 0.1f;

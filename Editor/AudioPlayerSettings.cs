@@ -18,7 +18,6 @@ namespace Editor.AudioEditor
         public int playheadWidth;
         public Color markerColor;
         public int markerWidth;
-        public float markerXPositionOffset;
         public float waveformScale;
     }
 }
