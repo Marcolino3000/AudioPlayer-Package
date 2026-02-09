@@ -67,7 +67,7 @@ namespace Editor.AudioEditor
                     if (lastPlayheadSample < marker.Sample && playheadSample >= marker.Sample)
                     {
                         OnMarkerReached?.Invoke(marker.Expression);
-                        Debug.Log("marker reached: " + marker.Id);
+                        // Debug.Log("Marker ID reached: " + marker.Id);
                     }
                 }
             }
