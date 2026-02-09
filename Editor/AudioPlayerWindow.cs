@@ -120,7 +120,9 @@ namespace Editor.AudioEditor
             AddClipMarkers();
             // rootVisualElement.Add(customPlayButton);
             
+            rootVisualElement.focusable = true;
             rootVisualElement.RegisterCallback<KeyDownEvent>(OnKeyDown);
+            
         }
 
         private void OnKeyDown(KeyDownEvent evt)
