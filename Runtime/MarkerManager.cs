@@ -89,6 +89,14 @@ namespace Editor.AudioEditor
             return false;
         }
         
+        public enum MarkerType
+        {
+            Paragraph,
+            Neutral,
+            Happy,
+            Annoyed
+        }
+        
         [Serializable]
         public class Marker
         {

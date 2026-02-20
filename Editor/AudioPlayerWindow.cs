@@ -6,14 +6,6 @@ using UnityEngine.UIElements;
 
 namespace Editor.AudioEditor
 {
-    
-    public enum MarkerType
-    {
-        Paragraph,
-        Neutral,
-        Happy,
-        Annoyed
-    }
     public class AudioPlayerWindow : EditorWindow
     {
         [SerializeField] private VisualTreeAsset playhead;
@@ -412,7 +404,7 @@ namespace Editor.AudioEditor
                 enumField.value = marker.Expression;
                 enumField.RegisterValueChangedCallback(evt =>
                 {
-                    marker.Expression = (MarkerType)evt.newValue;
+                    marker.Expression = (MarkerManager.MarkerType)evt.newValue;
                     EditorUtility.SetDirty(markerManager);
                 });
             }

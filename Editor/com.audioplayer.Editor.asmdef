@@ -1,7 +1,9 @@
 {
     "name": "com.audioplayer.Editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:f658efd66cf1847239955bbdac42f6d6"
+    ],
     "includePlatforms": [
         "Editor"
     ],
