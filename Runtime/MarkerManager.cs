@@ -91,8 +91,15 @@ public class MarkerManager : SerializedScriptableObject
     {
         Paragraph,
         Neutral,
+        Angry,
+        Annoyed,
         Happy,
-        Annoyed
+        Moved,
+        Sad,
+        Sarcastic,
+        Skeptical,
+        Smirky,
+        Thoughtful
     }
         
     [Serializable]
