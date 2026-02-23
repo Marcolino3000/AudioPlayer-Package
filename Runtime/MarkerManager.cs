@@ -87,6 +87,32 @@ public class MarkerManager : SerializedScriptableObject
         return false;
     }
         
+    /// <summary>
+    /// Returns all paragraph markers and the time in seconds until the next paragraph marker (or end of clip).
+    /// </summary>
+    /// <param name="clip">The AudioClip to check.</param>
+    /// <returns>List of tuples: (marker sample, seconds until next paragraph marker or end of clip)</returns>
+    public List<float> GetParagraphMarkerTimespans(AudioClip clip)
+    {
+        var result = new List<float>();
+        if (clip == null)
+        {
+            Debug.LogWarning("Tried to get Paragraph markers but audio clip was null! Returning empty list");
+            return result;
+        }
+        var paragraphSamples = GetMarkerPositions(clip, MarkerType.Paragraph).OrderBy(s => s).ToList();
+        int sampleCount = clip.samples;
+        float frequency = clip.frequency;
+        for (int i = 0; i < paragraphSamples.Count; i++)
+        {
+            int currentSample = paragraphSamples[i];
+            int nextSample = (i + 1 < paragraphSamples.Count) ? paragraphSamples[i + 1] : sampleCount;
+            float secondsUntilNext = (nextSample - currentSample) / frequency;
+            result.Add(secondsUntilNext);
+        }
+        return result;
+    }
+        
     public enum MarkerType
     {
         Paragraph,
