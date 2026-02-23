@@ -41,10 +41,10 @@ public class MarkerManager : SerializedScriptableObject
         }
     }
 
-    public List<int> GetMarkerPositions(AudioClip clip)
+    public List<int> GetMarkerPositions(AudioClip clip, MarkerType type)
     {
         if (clipsToMarkers.TryGetValue(clip, out var markers))
-            return markers.Select(m => m.Sample).ToList();
+            return markers.Where(m => m.Type == type).Select(m => m.Sample).ToList();
         return new List<int>();
     }
         
@@ -64,7 +64,7 @@ public class MarkerManager : SerializedScriptableObject
             {
                 if (lastPlayheadSample < marker.Sample && playheadSample >= marker.Sample)
                 {
-                    OnMarkerReached?.Invoke(marker.Expression);
+                    OnMarkerReached?.Invoke(marker.Type);
                     // Debug.Log("Marker ID reached: " + marker.Id);
                 }
             }
@@ -107,7 +107,7 @@ public class MarkerManager : SerializedScriptableObject
     {
         public readonly int Id;
         public readonly int Sample;
-        public MarkerType Expression = MarkerType.Paragraph;
+        public MarkerType Type = MarkerType.Paragraph;
         public Marker(int id, int sample)
         {
             Id = id;

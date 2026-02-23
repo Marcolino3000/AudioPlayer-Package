@@ -400,11 +400,11 @@ namespace Editor.AudioEditor
             var enumField = markerTemplate.Q<EnumField>();
             if (enumField != null)
             {
-                enumField.Init(marker.Expression);
-                enumField.value = marker.Expression;
+                enumField.Init(marker.Type);
+                enumField.value = marker.Type;
                 enumField.RegisterValueChangedCallback(evt =>
                 {
-                    marker.Expression = (MarkerManager.MarkerType)evt.newValue;
+                    marker.Type = (MarkerManager.MarkerType)evt.newValue;
                     EditorUtility.SetDirty(markerManager);
                 });
             }
