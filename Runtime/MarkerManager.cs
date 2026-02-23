@@ -86,12 +86,7 @@ public class MarkerManager : SerializedScriptableObject
         }
         return false;
     }
-        
-    /// <summary>
-    /// Returns all paragraph markers and the time in seconds until the next paragraph marker (or end of clip).
-    /// </summary>
-    /// <param name="clip">The AudioClip to check.</param>
-    /// <returns>List of tuples: (marker sample, seconds until next paragraph marker or end of clip)</returns>
+
     public List<float> GetParagraphMarkerTimespans(AudioClip clip)
     {
         var result = new List<float>();
@@ -101,6 +96,11 @@ public class MarkerManager : SerializedScriptableObject
             return result;
         }
         var paragraphSamples = GetMarkerPositions(clip, MarkerType.Paragraph).OrderBy(s => s).ToList();
+        if (paragraphSamples.Count == 0)
+        {
+            result.Add(clip.length);
+            return result;
+        }
         int sampleCount = clip.samples;
         float frequency = clip.frequency;
         for (int i = 0; i < paragraphSamples.Count; i++)
