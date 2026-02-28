@@ -109,14 +109,22 @@ public class MarkerManager : SerializedScriptableObject
         
         for (int i = 0; i < paragraphPositions.Count; i++)
         {
-            int nextSample = (i + 1 < paragraphPositions.Count) ? paragraphPositions[i + 1] : sampleCount;
-            float secondsUntilNext = (nextSample - currentSample) / frequency;
-            result.Add(secondsUntilNext);
+            int nextSample = paragraphPositions[i];
+            AddSecondsUntilNextToList(nextSample, currentSample, frequency, result);
             currentSample = nextSample;
         }
+        
+        AddSecondsUntilNextToList(sampleCount, currentSample, frequency, result);
+        
         return result;
     }
-        
+
+    private void AddSecondsUntilNextToList(int nextSample, int currentSample, float frequency, List<float> result)
+    {
+        float secondsUntilNext = (nextSample - currentSample) / frequency;
+        result.Add(secondsUntilNext);
+    }
+
     public enum MarkerType
     {
         Paragraph,
