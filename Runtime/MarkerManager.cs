@@ -95,20 +95,24 @@ public class MarkerManager : SerializedScriptableObject
             Debug.LogWarning("Tried to get Paragraph markers but audio clip was null! Returning empty list");
             return result;
         }
-        var paragraphSamples = GetMarkerPositions(clip, MarkerType.Paragraph).OrderBy(s => s).ToList();
-        if (paragraphSamples.Count == 0)
+        var paragraphPositions = GetMarkerPositions(clip, MarkerType.Paragraph).OrderBy(s => s).ToList();
+
+        if (paragraphPositions.Count == 0)
         {
             result.Add(clip.length);
             return result;
         }
+        
         int sampleCount = clip.samples;
         float frequency = clip.frequency;
-        for (int i = 0; i < paragraphSamples.Count; i++)
+        int currentSample = 0;
+        
+        for (int i = 0; i < paragraphPositions.Count; i++)
         {
-            int currentSample = paragraphSamples[i];
-            int nextSample = (i + 1 < paragraphSamples.Count) ? paragraphSamples[i + 1] : sampleCount;
+            int nextSample = (i + 1 < paragraphPositions.Count) ? paragraphPositions[i + 1] : sampleCount;
             float secondsUntilNext = (nextSample - currentSample) / frequency;
             result.Add(secondsUntilNext);
+            currentSample = nextSample;
         }
         return result;
     }
