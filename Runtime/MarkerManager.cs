@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "AudioEditor/MarkerManager")]
@@ -22,6 +23,7 @@ public class MarkerManager : SerializedScriptableObject
         }
         var marker = new Marker(nextId++, sample);
         markers.Add(marker);
+        EditorUtility.SetDirty(this);
         return marker.Id;
     }
 
@@ -31,6 +33,7 @@ public class MarkerManager : SerializedScriptableObject
         {
             markers.RemoveAll(m => m.Id == id);
         }
+        EditorUtility.SetDirty(this);
     }
         
     public void RemoveMarkerBySample(AudioClip clip, int sample)
@@ -39,6 +42,7 @@ public class MarkerManager : SerializedScriptableObject
         {
             markers.RemoveAll(m => m.Sample == sample);
         }
+        EditorUtility.SetDirty(this);
     }
 
     public List<int> GetMarkerPositions(AudioClip clip, MarkerType type)
