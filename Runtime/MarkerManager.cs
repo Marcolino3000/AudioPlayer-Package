@@ -23,7 +23,9 @@ public class MarkerManager : SerializedScriptableObject
         }
         var marker = new Marker(nextId++, sample);
         markers.Add(marker);
+#if UNITY_EDITOR
         EditorUtility.SetDirty(this);
+        #endif
         return marker.Id;
     }
 
@@ -33,7 +35,9 @@ public class MarkerManager : SerializedScriptableObject
         {
             markers.RemoveAll(m => m.Id == id);
         }
+    #if UNITY_EDITOR
         EditorUtility.SetDirty(this);
+    #endif
     }
         
     public void RemoveMarkerBySample(AudioClip clip, int sample)
@@ -42,7 +46,9 @@ public class MarkerManager : SerializedScriptableObject
         {
             markers.RemoveAll(m => m.Sample == sample);
         }
+#if UNITY_EDITOR
         EditorUtility.SetDirty(this);
+        #endif
     }
 
     public List<int> GetMarkerPositions(AudioClip clip, MarkerType type)
