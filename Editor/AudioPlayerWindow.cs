@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Sirenix.Reflection.Editor;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -388,6 +389,8 @@ namespace Editor.AudioEditor
 
         private void AddMarkerVisualElement(MarkerManager.Marker marker, float localX)
         {
+            marker.CharacterToAnimate ??= markerManager.CharacterNames[0];
+            
             var ve = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.cod.audioplayer/Editor/SmallTriangleMarker.uxml");
             var markerTemplate = ve.CloneTree();
             markerTemplate.style.position = Position.Absolute;
@@ -408,7 +411,20 @@ namespace Editor.AudioEditor
                     EditorUtility.SetDirty(markerManager);
                 });
             }
-            
+
+            var characterNameField = markerTemplate.Q<DropdownField>();
+            if (characterNameField != null)
+            {
+                characterNameField.choices = markerManager.CharacterNames;
+                characterNameField.RegisterValueChangedCallback(evt =>
+                {
+                    marker.CharacterToAnimate = evt.newValue;
+                    EditorUtility.SetDirty(markerManager);
+                });
+                characterNameField.value = marker.CharacterToAnimate;
+            }
+
+
             markerTemplate.RegisterCallback<PointerDownEvent>(evt =>
             {
                 if (evt.button == 1)
@@ -421,6 +437,8 @@ namespace Editor.AudioEditor
             });
 
             waveformImageContainer.Add(markerTemplate);
+            
+            EditorUtility.SetDirty(markerManager);
             // markerManager.AddMarker(currentClip, sample);
         }
 

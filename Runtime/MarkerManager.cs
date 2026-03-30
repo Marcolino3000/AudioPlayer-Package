@@ -8,8 +8,12 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "AudioEditor/MarkerManager")]
 public class MarkerManager : SerializedScriptableObject
 {
-    public event Action<MarkerType> OnMarkerReached;
-        
+    public event Action<MarkerType, string> OnMarkerReached;
+
+    [Header("Settings")] 
+    public List<string> CharacterNames;
+    
+    [Header("Debug")]
     public int lastPlayheadSample = -1;
     public Dictionary<AudioClip, List<Marker>> clipsToMarkers = new();
     public int nextId = 1;
@@ -23,9 +27,9 @@ public class MarkerManager : SerializedScriptableObject
         }
         var marker = new Marker(nextId++, sample);
         markers.Add(marker);
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         EditorUtility.SetDirty(this);
-        #endif
+    #endif
         return marker.Id;
     }
 
@@ -46,9 +50,9 @@ public class MarkerManager : SerializedScriptableObject
         {
             markers.RemoveAll(m => m.Sample == sample);
         }
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         EditorUtility.SetDirty(this);
-        #endif
+    #endif
     }
 
     public List<int> GetMarkerPositions(AudioClip clip, MarkerType type)
@@ -74,7 +78,7 @@ public class MarkerManager : SerializedScriptableObject
             {
                 if (lastPlayheadSample < marker.Sample && playheadSample >= marker.Sample)
                 {
-                    OnMarkerReached?.Invoke(marker.Type);
+                    OnMarkerReached?.Invoke(marker.Type, marker.CharacterToAnimate);
                     // Debug.Log("Marker ID reached: " + marker.Id);
                 }
             }
@@ -156,6 +160,7 @@ public class MarkerManager : SerializedScriptableObject
         public readonly int Id;
         public readonly int Sample;
         public MarkerType Type = MarkerType.Paragraph;
+        public string CharacterToAnimate;
         public Marker(int id, int sample)
         {
             Id = id;
