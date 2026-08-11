@@ -400,25 +400,33 @@ namespace Editor.AudioEditor
             // marker.style.height = waveformHeight * 0.1f;
             // marker.style.backgroundColor = settings.markerColor;
 
-            var enumField = markerTemplate.Q<EnumField>();
-            if (enumField != null)
+            var expressionField = markerTemplate.Q<DropdownField>("expressionField");
+            if (expressionField != null)
             {
-                enumField.Init(marker.Type);
-                enumField.value = marker.Type;
-                enumField.RegisterValueChangedCallback(evt =>
+                RefreshExpressionChoices(expressionField, marker);
+                expressionField.RegisterValueChangedCallback(evt =>
                 {
-                    marker.Type = (MarkerManager.MarkerType)evt.newValue;
+                    var selected = markerManager.GetExpressions(marker.CharacterToAnimate)
+                        .Find(e => e.Name == evt.newValue);
+
+                    if (selected != null)
+                        marker.Type = selected.State;
+
                     EditorUtility.SetDirty(markerManager);
                 });
             }
 
-            var characterNameField = markerTemplate.Q<DropdownField>();
+            var characterNameField = markerTemplate.Q<DropdownField>("nameField");
             if (characterNameField != null)
             {
                 characterNameField.choices = markerManager.CharacterNames;
                 characterNameField.RegisterValueChangedCallback(evt =>
                 {
                     marker.CharacterToAnimate = evt.newValue;
+
+                    if (expressionField != null)
+                        RefreshExpressionChoices(expressionField, marker);
+
                     EditorUtility.SetDirty(markerManager);
                 });
                 characterNameField.value = marker.CharacterToAnimate;
@@ -437,9 +445,37 @@ namespace Editor.AudioEditor
             });
 
             waveformImageContainer.Add(markerTemplate);
-            
+
             EditorUtility.SetDirty(markerManager);
             // markerManager.AddMarker(currentClip, sample);
+        }
+
+        /// <summary>
+        /// Füllt die Ausdrucksauswahl mit den Ausdrücken der aktuell gewählten Figur. Der bereits
+        /// gesetzte State des Markers bleibt dabei unangetastet - kennt die Figur ihn nicht, bekommt
+        /// er einen eigenen Eintrag, damit beim Umschalten der Figur nichts still verlorengeht.
+        /// </summary>
+        private void RefreshExpressionChoices(DropdownField field, MarkerManager.Marker marker)
+        {
+            var expressions = markerManager.GetExpressions(marker.CharacterToAnimate);
+            var choices = new List<string>();
+
+            foreach (var expression in expressions)
+                choices.Add(expression.Name);
+
+            var current = expressions.Find(e => e.State == marker.Type);
+            var currentName = current != null ? current.Name : LabelForUnlistedState(marker.Type);
+
+            if (current == null)
+                choices.Add(currentName);
+
+            field.choices = choices;
+            field.SetValueWithoutNotify(currentName);
+        }
+
+        private static string LabelForUnlistedState(int state)
+        {
+            return state == MarkerManager.ParagraphState ? "Paragraph" : $"State {state}";
         }
 
         private void OnPlayButtonClicked()

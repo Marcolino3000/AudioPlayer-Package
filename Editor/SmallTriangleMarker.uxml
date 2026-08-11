@@ -4,7 +4,7 @@
     <ui:VisualElement name="triangleMarker" class="triangleMarker">
         <ui:VisualElement name="line" style="position: absolute; width: 100%; height: 100%; background-image: resource(&apos;toppng.com-horizontal-white-line-png-4408x2548&apos;); display: flex; background-size: 40px 60px; top: -20px;" />
         <ui:VisualElement name="triangle" style="position: absolute; width: 100%; height: 100%; background-image: resource(&apos;play-icon-white-triangle-up&apos;); background-size: 10% 20%; top: 5px;" />
-        <ui:EnumField value="Center" type="MarkerManager+MarkerType, com.audioplayer" data-source-type="Editor.AudioEditor.MarkerManager+MarkerType, com.audioplayer" name="EnumField" style="position: absolute; top: 68px; left: 9px; width: 81px; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px;" />
+        <ui:DropdownField name="expressionField" style="position: absolute; top: 68px; left: 9px; width: 81px; border-top-left-radius: 2px; border-top-right-radius: 2px; border-bottom-right-radius: 2px; border-bottom-left-radius: 2px;" />
         <ui:DropdownField name="nameField" style="top: 90px; left: 9px; width: 81px;" />
         <ui:Label text="Animation" name="label" style="position: absolute; top: 63px; right: 11px; -unity-text-align: middle-center; width: 73px; background-color: rgb(42, 42, 42); border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; color: rgb(255, 255, 255); font-size: 10px; height: 75px; display: none;" />
     </ui:VisualElement>

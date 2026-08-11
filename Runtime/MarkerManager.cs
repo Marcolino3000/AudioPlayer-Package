@@ -8,11 +8,17 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "AudioEditor/MarkerManager")]
 public class MarkerManager : SerializedScriptableObject
 {
-    public event Action<MarkerType, string> OnMarkerReached;
+    public const int ParagraphState = 0;
 
-    [Header("Settings")] 
+    public event Action<int, string> OnMarkerReached;
+
+    [Header("Settings")]
     public List<string> CharacterNames;
-    
+
+    [Tooltip("Je Figur die Ausdrücke, die im Marker zur Auswahl stehen. State ist der Wert, " +
+             "der an den expState-Parameter im Animator geht.")]
+    public Dictionary<string, List<Expression>> CharacterExpressions = DefaultCharacterExpressions();
+
     [Header("Debug")]
     public int lastPlayheadSample = -1;
     public Dictionary<AudioClip, List<Marker>> clipsToMarkers = new();
@@ -55,13 +61,80 @@ public class MarkerManager : SerializedScriptableObject
     #endif
     }
 
-    public List<int> GetMarkerPositions(AudioClip clip, MarkerType type)
+    public List<int> GetMarkerPositions(AudioClip clip, int state)
     {
         if (clipsToMarkers.TryGetValue(clip, out var markers))
-            return markers.Where(m => m.Type == type).Select(m => m.Sample).ToList();
+            return markers.Where(m => m.Type == state).Select(m => m.Sample).ToList();
         return new List<int>();
     }
-        
+
+    /// <summary>
+    /// Die Ausdrücke, die für diese Figur zur Auswahl stehen. Leere Liste, wenn die Figur
+    /// nicht eingetragen ist - dann bleibt nur der bereits gesetzte Wert des Markers.
+    /// </summary>
+    public List<Expression> GetExpressions(string characterName)
+    {
+        if (characterName != null
+            && CharacterExpressions != null
+            && CharacterExpressions.TryGetValue(characterName, out var expressions)
+            && expressions != null)
+            return expressions;
+
+        return new List<Expression>();
+    }
+
+    [Button("Standard-Ausdrücke wiederherstellen")]
+    public void RestoreDefaultExpressions()
+    {
+        CharacterExpressions = DefaultCharacterExpressions();
+    #if UNITY_EDITOR
+        EditorUtility.SetDirty(this);
+    #endif
+    }
+
+    private static Dictionary<string, List<Expression>> DefaultCharacterExpressions()
+    {
+        return new Dictionary<string, List<Expression>>
+        {
+            ["Marlene"] = new()
+            {
+                new Expression("Paragraph", ParagraphState),
+                new Expression("neutral", 1),
+                new Expression("angry", 2),
+                new Expression("annoyed", 3),
+                new Expression("happy", 4),
+                new Expression("moved", 5),
+                new Expression("sad", 6),
+                new Expression("sarcasm", 7),
+                new Expression("skeptical", 8),
+                new Expression("smirky", 9),
+                new Expression("thoughtful", 10),
+            },
+            ["Hilde"] = new()
+            {
+                new Expression("Neutral", 1),
+                new Expression("critical", 2),
+                new Expression("curious", 3),
+                new Expression("laughing", 4),
+                new Expression("sad", 5),
+                new Expression("sigh", 6),
+                new Expression("smile", 7),
+                new Expression("sartled", 8),
+            },
+            ["Paul"] = new()
+            {
+                new Expression("Neutral", 1),
+                new Expression("angry", 2),
+                new Expression("awkward", 3),
+                new Expression("critical", 4),
+                new Expression("sad", 5),
+                new Expression("smirk", 6),
+                new Expression("sulky", 7),
+                new Expression("wink", 8),
+            },
+        };
+    }
+
     public List<Marker> GetMarkers(AudioClip clip)
     {
         if (clipsToMarkers.TryGetValue(clip, out var markers))
@@ -109,7 +182,7 @@ public class MarkerManager : SerializedScriptableObject
             Debug.LogWarning("Tried to get Paragraph markers but audio clip was null! Returning empty list");
             return result;
         }
-        var paragraphPositions = GetMarkerPositions(clip, MarkerType.Paragraph).OrderBy(s => s).ToList();
+        var paragraphPositions = GetMarkerPositions(clip, ParagraphState).OrderBy(s => s).ToList();
 
         if (paragraphPositions.Count == 0)
         {
@@ -139,27 +212,32 @@ public class MarkerManager : SerializedScriptableObject
         result.Add(secondsUntilNext);
     }
 
-    public enum MarkerType
+    /// <summary>
+    /// Ein auswählbarer Ausdruck einer Figur. <see cref="State"/> ist der Wert, der an den
+    /// expState-Parameter im Animator der Figur geht - <see cref="ParagraphState"/> bedeutet
+    /// "keine Mimik, nur Absatzmarke".
+    /// </summary>
+    [Serializable]
+    public class Expression
     {
-        Paragraph,
-        Neutral,
-        Angry,
-        Annoyed,
-        Happy,
-        Moved,
-        Sad,
-        Sarcastic,
-        Skeptical,
-        Smirky,
-        Thoughtful
+        public string Name;
+        public int State;
+
+        public Expression() { }
+
+        public Expression(string name, int state)
+        {
+            Name = name;
+            State = state;
+        }
     }
-        
+
     [Serializable]
     public class Marker
     {
         public readonly int Id;
         public readonly int Sample;
-        public MarkerType Type = MarkerType.Paragraph;
+        public int Type = ParagraphState;
         public string CharacterToAnimate;
         public Marker(int id, int sample)
         {
